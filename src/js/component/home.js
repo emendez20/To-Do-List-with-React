@@ -37,7 +37,6 @@ export function Home() {
 		} else {
 			setTodosFetch([...todosFetch, { label: input, done: false }]);
 		}
-		//setTodosFetch(newArray);
 	};
 
 	useEffect(() => {
@@ -65,14 +64,12 @@ export function Home() {
 		setTodosFetch(newTodos);
 	};
 	const deleteAllItems = todosFetch => {
-		setTodosFetch([
-			{ label: "", done: false },
-			{ label: "", done: false }
-		]);
+		//The API WILL NOT ALLOW TO SAVE A LIST THAT IS EMPTY. THIS FUNCTION WILL SAVE THE NEW LIST TO HAVE A PLACEHOLDER ITEM THAT IS INVISIBLE TO THE USER.
+		setTodosFetch([{ label: "placeholder", done: false }]);
 	};
 	return (
 		<div className="d-flex justify-content-center text-center input-group mt-5 flex-column container-fluid w-50 alert alert-dark">
-			<div className="d-flex justify-content-center mb-3">
+			<div className="justify-content-start m-3">
 				<input
 					type="text"
 					placeholder="Add ToDo"
@@ -85,43 +82,64 @@ export function Home() {
 					aria-describedby="inputGroup-sizing-default"
 				/>
 				<button
-					className="btn btn-success"
+					className="btn btn-success m-3"
 					id="submit"
 					onClick={() => {
 						addInput(input);
 						reset();
 					}}
 					placeholder="Enter to-do">
-					Add
+					+
 				</button>
 				<button
-					className="btn btn-warning"
+					className="btn btn-danger m-3 mb-0"
 					id="submit"
 					onClick={() => {
-						deleteAllItems();
+						confirm(
+							"This action will erase all To-Do Items\nClick OK to Confirm:"
+						)
+							? deleteAllItems()
+							: "Deletion aborted";
 					}}
 					placeholder="Enter to-do">
 					Delete All
 				</button>
 			</div>
 
-			<div>
-				{todosFetch.map((element, index) => (
-					<div className="container-fluid" key={index}>
-						<div className="alert alert-light row justify-content-center mw-100">
-							<div key={index} className="col-lg">
-								{element.label}
-							</div>
-							<div className="col-sm text-muted">
-								<i
-									className="fas fa-backspace"
-									onClick={() => {
-										deleteInput(index);
-									}}></i>
+			<div className="justify-content-center m-3">
+				{todosFetch.map((element, index) =>
+					index === 0 ? (
+						<div className="container-fluid d-none" key={index}>
+							<div className="alert alert-light row justify-content-center">
+								<div key={index} className="col-lg">
+									{element.label}
+								</div>
+								<div className="col-sm text-muted">
+									<i
+										className="fas fa-backspace"
+										onClick={() => {
+											deleteInput(index);
+										}}></i>
+								</div>
 							</div>
 						</div>
-					</div>
-				))}
+					) : (
+						<div className="container-fluid" key={index}>
+							<div className="alert alert-light row justify-content-center">
+								<div key={index} className="col-lg">
+									{element.label}
+								</div>
+								<div className="col-sm text-muted">
+									<i
+										className="fas fa-backspace"
+										onClick={() => {
+											deleteInput(index);
+										}}></i>
+								</div>
+							</div>
+						</div>
+					)
+				)}
 			</div>
 		</div>
 	);
